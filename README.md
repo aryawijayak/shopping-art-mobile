@@ -24,7 +24,23 @@
 <br>
 
 ### 2. Sebutkan seluruh widget yang kamu gunakan untuk menyelesaikan tugas ini dan jelaskan fungsinya masing-masing.
+|Widget   |  Fungsi |
+|---    |---    |
+|MyApp | Kelas yang mewakili aplikasi Flutter yang dijalankan. Ini adalah root dari aplikasi dan digunakan untuk mengatur tema dan halaman awal aplikasi |
+|MaterialApp | Widget yang menyediakan fungsi dasar yang diperlukan untuk membangun aplikasi Flutter berbasis Material Design, termasuk mengatur tema dan halaman awal |
+|MyHomePage	| Kelas yang mewakili halaman utama aplikasi. Ini berisi tata letak, seperti judul aplikasi, daftar item, dan tata letak grid. |
+|Scaffold	| Widget yang menyediakan kerangka dasar untuk halaman dengan AppBar dan tata letak badan |
+| AppBar	|  Bagian atas halaman yang berisi judul aplikasi dan tata letak |
+| Text	|  Widget untuk menampilkan teks pada halaman dengan properti-properti seperti teks, warna, dan gaya |
+| GridView	 |  Widget yang digunakan untuk menampilkan daftar item dalam tata letak grid. Ini digunakan untuk menampilkan daftar item dengan tampilan kotak-kotak yang disusun dalam baris dan kolom |
+| ShopCard	| Widget khusus yang digunakan untuk menampilkan setiap item toko dalam kotak berisi ikon dan teks. Ini digunakan di dalam GridView untuk setiap item | 
+| Material	| Widget ini digunakan untuk memberikan latar belakang berwarna yang berbeda untuk setiap ShopCard berdasarkan nama item. Ini juga berisi widget InkWell untuk membuat area responsif terhadap sentuhan |
+| InkWell	| Widget ini digunakan untuk memberikan respons saat item ShopCard diklik |
+| Container | Widget ini digunakan untuk mengelompokkan ikon dan teks dalam ShopCard dan memberikan padding di sekitarnya. |
+| Icon	| Widget untuk menampilkan ikon pada halaman |
+| Padding |  Widget untuk menambahkan ruang kosong atau jarak antara elemen-elemen dalam tata letak |
+| ScaffoldMessenger	 |  Digunakan untuk menampilkan SnackBar saat item ShopCard diklik |
+| SnackBar | Widget yang menampilkan pesan singkat ke pengguna setelah tindakan tertentu |
 
-
-
+<br>
 ### 3.Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)
