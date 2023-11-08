@@ -83,7 +83,7 @@ class ShopCard extends StatelessWidget {
       case "Logout":
         return Colors.pink;
       default:
-        return Colors.indigo; // Warna default jika tidak ada yang cocok
+        return Colors.indigo; 
     }
   }
 
@@ -102,6 +102,7 @@ class ShopCard extends StatelessWidget {
         },
         child: Container(
           // Container untuk menyimpan Icon dan Text
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.all(8),
           child: Center(
             child: Column(

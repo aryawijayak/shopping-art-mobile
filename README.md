@@ -43,4 +43,224 @@
 | SnackBar | Widget yang menampilkan pesan singkat ke pengguna setelah tindakan tertentu |
 
 <br>
+
 ### 3.Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)
+
+- [x] Membuat sebuah program Flutter baru dengan tema inventory seperti tugas-tugas sebelumnya.
+   
+    Untuk menginstall aplikasi flutter baru gunakan command 
+    ```flutter create <APP_NAME>```
+    dengan appname diganti dengan shopping Art
+
+    Setelah membuat aplikasi flutter, untuk menjalankannya gunakan 
+    ```flutter run```
+
+<br>
+
+- [x]  Membuat tiga tombol sederhana dengan ikon dan teks untuk:
+
+    Pertama tama import package yang dibutuhkan pada main dart
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:shopping_art/menu.dart';
+
+    ```
+    Selanjutnya split bagian main menjadi main dart dan menu dart. dengan memasukan konten berikut di menu.dart
+
+    ```
+    class MyHomePage ... {
+    ...
+    }
+
+    class _MyHomePageState ... {
+        ...
+    }
+    ```
+
+    Setelah itu modifikasi class MyApp pada main.dart agar bisa tersambung dengan class my homepage dari menu.dart dengan kode sebagai berikut:
+
+    ```
+    class MyApp extends StatelessWidget {
+    const MyApp({super.key});
+
+    // This widget is the root of your application.
+    @override
+    Widget build(BuildContext context) {
+        return MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+            // This is the theme of your application.
+            //
+            // TRY THIS: Try running your application with "flutter run". You'll see
+            // the application has a blue toolbar. Then, without quitting the app,
+            // try changing the seedColor in the colorScheme below to Colors.green
+            // and then invoke "hot reload" (save your changes or press the "hot
+            // reload" button in a Flutter-supported IDE, or press "r" if you used
+            // the command line to start the app).
+            //
+            // Notice that the counter didn't reset back to zero; the application
+            // state is not lost during the reload. To reset the state, use hot
+            // restart instead.
+            //
+            // This works for code too, not just values: Most code changes can be
+            // tested with just a hot reload.
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+            useMaterial3: true,
+        ),
+        home: MyHomePage(),
+        );
+    }
+    } 
+    ```
+
+    Setelah itu modifikasi myhomepage pada menu dart, dengan menambahkan list shop item seperti lihat produk, tambah produk, dan logout dengan code sebagai berikut:
+    ``` 
+    class MyHomePage extends StatelessWidget {
+    MyHomePage({Key? key}) : super(key: key);
+
+    final List<ShopItem> items = [
+        ShopItem("Lihat Produk", Icons.checklist),
+        ShopItem("Tambah Produk", Icons.add_shopping_cart),
+        ShopItem("Logout", Icons.logout),
+    ];
+
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+        appBar: AppBar(
+            title: const Text(
+                'Shopping Art',
+                style: TextStyle(
+                color:Colors.white,
+                )
+            ),
+            backgroundColor: Colors.indigo,
+        ),
+        body: SingleChildScrollView(
+            // Widget wrapper yang dapat discroll
+            child: Padding(
+            padding: const EdgeInsets.all(10.0), // Set padding dari halaman
+            child: Column(
+                // Widget untuk menampilkan children secara vertikal
+                children: <Widget>[
+                const Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    // Widget Text untuk menampilkan tulisan dengan alignment center dan style yang sesuai
+                    child: Text(
+                    'PBP Shop', // Text yang menandakan toko
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                    ),
+                    ),
+                ),
+                // Grid layout
+                GridView.count(
+                    // Container pada card kita.
+                    primary: true,
+                    padding: const EdgeInsets.all(20),
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    children: items.map((ShopItem item) {
+                    // Iterasi untuk setiap item
+                    return ShopCard(item);
+                    }).toList(),
+                ),
+                ],
+            ),
+            ),
+        ),
+        );
+    }
+    }
+
+    class ShopItem {
+    final String name;
+    final IconData icon;
+
+    ShopItem(this.name, this.icon);
+    }
+    class ShopCard extends StatelessWidget {
+    final ShopItem item;
+
+    const ShopCard(this.item, {super.key}); // Constructor
+    }
+        
+    ```
+
+<br>
+
+- [x]  Memunculkan Snackbar dengan tulisan:
+    
+    Untuk memunculkan snackbar gunakan widger build dengan kode sebagai berikut:
+
+    ```
+    Widget build(BuildContext context) {
+        return Material(
+        color: getButtonColor(item), // Menggunakan fungsi getButtonColor
+        child: InkWell(
+            // Area responsive terhadap sentuhan
+            onTap: () {
+            // Memunculkan SnackBar ketika diklik
+            ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                    content: Text("Kamu telah menekan tombol ${item.name}!")));
+            },
+            child: Container(
+            // Container untuk menyimpan Icon dan Text
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+            padding: const EdgeInsets.all(8),
+            child: Center(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                    Icon(
+                    item.icon,
+                    color: Colors.white,
+                    size: 30.0,
+                    ),
+                    const Padding(padding: EdgeInsets.all(3)),
+                    Text(
+                    item.name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white),
+                    ),
+                ],
+                ),
+            ),
+            ),
+        ),
+        );
+    }
+    ```
+    Saat nantinya menekan tombol akan muncul widget dengan tulisan "Kamu telah menekan tombol ${item.name}!"
+
+- [x]  Kamu akan mendapatkan nilai bonus pada penilaian tugas ini apabila kamu mengimplementasikan warna-warna yang berbeda untuk setiap tombol (Lihat Item, Tambah Item, dan Logout).
+
+    Untuk mengubah tiap warna pada tombol, saya menggunakan pendekatan key dari value item pada shop item. Saya menambahkannya pada class shopcard dengan mengambil superkey name item. Kodenya sebagai berikut:
+    ```
+    class ShopCard extends StatelessWidget {
+    final ShopItem item;
+
+    const ShopCard(this.item, {super.key}); // Constructor
+
+    Color getButtonColor(ShopItem item) {
+        // Fungsi ini akan mengembalikan warna latar belakang sesuai dengan nama tombol
+        switch (item.name) {
+        case "Lihat Produk":
+            return Colors.indigo;
+        case "Tambah Produk":
+            return Colors.cyan;
+        case "Logout":
+            return Colors.pink;
+        default:
+            return Colors.indigo; 
+        }
+        }
+    }
+    ```
+
