@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shopping_art/screens/lihat_product.dart';
 import 'package:shopping_art/screens/shoplist_form.dart';
+import 'package:shopping_art/screens/lihat_product.dart';
 
 
 class ShopItem {
@@ -46,6 +48,14 @@ class ShopCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ShopFormPage()),
+            );
+          }
+
+          if (item.name == "Lihat Produk") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProductListPage(products: productList)),
             );
           }
         },

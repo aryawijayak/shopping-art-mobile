@@ -264,3 +264,130 @@
     }
     ```
 
+<br>
+<br>
+
+# Tugas 8
+
+### 1. Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement(), disertai dengan contoh mengenai penggunaan kedua metode tersebut yang tepat!
+
+|Aspek | Navigator.push() | Navigator.pushReplacement() |
+| --- | --- | --- |
+| `Apa yang dilakukan` |  Menambahkan rute baru ke tumpukan navigasi | Menambahkan rute baru dan menggantikan rute saat ini di tumpukan navigasi |
+| `Rute yang ditampilkan`	| Rute baru ditambahkan ke tumpukan dan rute lama tetap ada	| Rute baru ditambahkan dan rute lama dihapus dari tumpukan, sehingga pengguna tidak bisa kembali ke rute lama |
+| `Hasil	` | Menambahkan Page1 ke tumpukan navigasi	 |  Menggantikan Page1 dengan Page2 di tumpukan navigasi |
+| `Contoh Penggunaan `| ``` Navigator.push(context, MaterialPageRoute(builder: (context) => Page1()));``` | ```Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Page2())); ```|
+| `Navigasi mundur (back)` | Pengguna dapat kembali ke rute lama dengan tombol "back"	|  Pengguna tidak dapat kembali ke rute lama dengan tombol "back" |
+| `Pengaruh pada struktur tumpukan navigasi`	| Menambahkan rute baru ke tumpukan, mempertahankan tumpukan yang semakin dalam	| Menambahkan rute baru ke tumpukan dan menggantikan rute saat ini, menjaga tumpukan tetap dangkal |
+| `Pengaruh pada riwayat navigasi`  | Menambahkan rute baru ke riwayat navigasi, membuat riwayat semakin panjang	| Menghapus rute lama dari riwayat navigasi, menjaga riwayat tetap pendek dan sederhana |
+| `Pengaruh pada kinerja aplikasi`	| Jika tumpukan navigasi semakin dalam, ini dapat mempengaruhi kinerja aplikasi karena harus menyimpan lebih banyak rute di memori	| Memiliki tumpukan navigasi yang lebih dangkal cenderung lebih efisien dalam hal penggunaan memori |
+
+<br>
+
+### 2.  Jelaskan masing-masing layout widget pada Flutter dan konteks penggunaannya masing-masing!
+
+| Layout Widget | Penjelasan | Konteks Penggunaan |
+|---    |---     |---   |
+| `Container`| Widget serbaguna untuk mengatur tata letak dan gaya elemen dalam kotak Dapat mengatur margin, padding, warna latar belakang, dll | Mengelompokkan elemen dalam satu wadah dengan tampilan seragam |
+| `Row` dan `Column`| Mengatur elemen dalam baris (horizontal) atau kolom (vertikal) | Menyusun elemen dalam urutan yang jelas, seperti daftar item, header, konten, atau footer |
+| `ListView` | Mengatur daftar elemen yang dapat digulir. Cocok untuk daftar panjang | Menampilkan daftar item, berita, atau isi yang lebih panjang dari layar |
+| `Expanded` | Digunakan dalam `Row` atau `Column` untuk memenuhi sebanyak mungkin ruang yang tersedia | Membagi ruang dalam baris atau kolom dengan proporsi yang sesuai |
+| `Stack` | Mengatur widget tumpukan di atas satu sama lain. Berguna untuk menumpuk elemen | Membuat tampilan kompleks dengan elemen yang bertumpuk, seperti tombol overlay |
+| `Wrap` | Mengatur widget dalam baris dan kolom dengan fleksibilitas. Jika ruang tidak cukup, melanjutkan ke baris atau kolom berikutnya | Menampilkan elemen dalam berbagai ukuran tanpa risiko overflow |
+| `GridView`| Mengatur widget dalam susunan berdasarkan grid (kotak) | Menampilkan elemen dalam tata letak grid, seperti galeri gambar |
+| `Card` | Mengelompokkan informasi dalam kotak dengan bayangan (elevasi) | Menampilkan data dengan tampilan seragam, seperti kartu produk atau kontak |
+| `ListTile`| Membuat elemen dalam daftar dengan ikon, teks, dan opsi tambahan | Membuat daftar item dengan ikon dan teks, seperti menu atau daftar kontak |
+| `Flex` | Digunakan dalam `Row` atau `Column` untuk mengontrol seberapa banyak ruang yang diberikan ke anak-anaknya dengan flex factor | Mengatur fleksibilitas dalam mendistribusikan ruang dalam baris atau kolom |
+
+<br>
+
+### 3. Sebutkan apa saja elemen input pada form yang kamu pakai pada tugas kali ini dan jelaskan mengapa kamu menggunakan elemen input tersebut!
+
+Pada tugas yang diberikan, terdapat tiga elemen input dalam formulir yang digunakan untuk mengumpulkan informasi tentang produk yang akan ditambahkan ke dalam aplikasi toko. Berikut adalah elemen input dan penjelasan mengapa elemen-elemen input ini digunakan:
+
+| Elemen Input | Penjelasan | Alasan Penggunaan |
+|---    |---    |---    |
+| `TextFormField` Nama Produk | Elemen input ini digunakan untuk mengizinkan pengguna memasukkan nama produk yang ingin ditambahkan ke dalam aplikasi toko. Nama produk digunakan untuk identifikasi produk secara unik | Nama produk adalah atribut penting dalam mendeskripsikan dan mengidentifikasi suatu produk |
+| `TextFormField` Harga | Elemen input ini digunakan untuk mengizinkan pengguna memasukkan harga produk yang ingin ditambahkan. Harga adalah informasi penting dalam sebuah produk dan digunakan dalam proses perhitungan | Harga produk adalah atribut kunci yang relevan dalam konteks toko, dan perlu divalidasi sebagai angka |
+| `TextFormField` Deskripsi Produk | Elemen input ini digunakan untuk mengizinkan pengguna memasukkan deskripsi produk. Deskripsi memberikan informasi tambahan tentang produk yang berguna untuk calon pembeli | Deskripsi produk adalah informasi tambahan yang membantu calon pembeli memahami produk dengan lebih baik |
+
+Penggunaan elemen-elemen input ini penting dalam konteks formulir untuk aplikasi toko karena mereka memungkinkan pengguna untuk memasukkan data yang relevan dan penting tentang produk yang ingin mereka tambahkan. Elemen-elemen input ini juga memungkinkan validasi data untuk memastikan bahwa data yang dimasukkan sesuai dengan format yang diharapkan.
+
+<br>
+
+### 4. Bagaimana penerapan clean architecture pada aplikasi Flutter?
+
+Clean Architecture adalah pendekatan pengembangan perangkat lunak yang memisahkan aplikasi menjadi beberapa lapisan dengan tanggung jawab yang berbeda. Hal ini meningkatkan struktur, tes, dan pemeliharaan aplikasi. Di bawah ini adalah panduan tentang bagaimana menerapkan Clean Architecture pada aplikasi Flutter.
+
+`Konsep Dasar Clean Architecture`
+
+Clean Architecture mengikuti prinsip pemisahan tugas dan tanggung jawab menjadi tiga lapisan utama:
+
+1. **Domain Layer (Core)**:
+   - Berisi logika bisnis atau domain aplikasi.
+   - Entitas, use case, dan interface repositori berada di sini.
+
+2. **Data Layer**:
+   - Berinteraksi dengan sumber data seperti API eksternal dan penyimpanan lokal.
+   - Implementasi repositori terletak di sini.
+
+3. **Presentation Layer**:
+   - Menangani tampilan dan antarmuka pengguna.
+   - Logika presentasi diatur di sini menggunakan ViewModel atau Bloc.
+
+`Langkah-Langkah Penerapan Clean Architecture`
+
+1. **Pemahaman Clean Architecture**:
+   - Pahami konsep dasar Clean Architecture dan hubungan antara lapisan.
+
+2. **Domain Layer (Core)**:
+   - Definisikan entitas, use case, dan repositori di lapisan ini.
+
+3. **Data Layer**:
+   - Buat implementasi repositori untuk menghubungkan ke sumber data seperti database dan API.
+
+4. **Presentation Layer**:
+   - Gunakan widget Flutter untuk membuat antarmuka pengguna (UI).
+   - Pisahkan logika presentasi dari logika bisnis.
+
+5. **Dependency Injection**:
+   - Gunakan teknik Dependency Injection (misalnya, `Provider` atau `GetIt`) untuk mengelola dependensi.
+
+6. **Test-Driven Development (TDD)**:
+   - Terapkan TDD dengan menulis tes unit dan integrasi untuk memastikan logika bisnis berfungsi dengan benar.
+
+7. **Pola Desain**:
+   - Pilih pola desain seperti MVC, MVVM, atau Bloc Pattern untuk mengatur logika presentasi.
+
+8. **Repository Pattern**:
+   - Gunakan pola repositori untuk mengakses data dari lapisan Data.
+
+9. **Manajemen Rute**:
+   - Gunakan navigator Flutter atau library navigasi untuk mengatur rute aplikasi.
+
+10. **Pemisahan Tugas**:
+    - Pastikan setiap lapisan bertanggung jawab terhadap tugas tertentu dan memiliki tanggung jawab yang terpisah.
+
+11. **Penyimpanan Lokal dan Koneksi Jaringan**:
+    - Gunakan paket Flutter seperti `shared_preferences` dan `http` untuk penyimpanan lokal dan koneksi jaringan.
+
+12. **Pengujian UI dan E2E**:
+    - Selain pengujian unit, tambahkan pengujian UI/widget dan pengujian ujung ke ujung (E2E).
+
+13. **Logging dan Pemantauan**:
+    - Tambahkan log dan pemantauan untuk pemecahan masalah dan pemantauan performa.
+
+14. **Dokumentasi**:
+    - Dokumentasikan kode dengan baik untuk kolaborasi tim dan pemeliharaan.
+
+`Manfaat Clean Architecture`
+
+- Struktur yang terorganisir dengan baik.
+- Kemudahan dalam pengujian dan pemeliharaan.
+- Kemudahan dalam penggantian lapisan atau teknologi.
+
+Penerapan Clean Architecture membantu dalam pengembangan aplikasi Flutter yang lebih terstruktur dan terorganisir dengan baik.
+
+<br>
+
+### 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial)
