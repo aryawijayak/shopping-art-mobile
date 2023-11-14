@@ -1,4 +1,4 @@
-# 🖼️ Shopping Art 🛒 🎨
+`# 🖼️ Shopping Art 🛒 🎨
 
 `Dalam era digital ini 🏙️, seni sering diabaikan dan kurang dihargai 😢. shopping art sekarang sudah hadir dalam versi mobile 📱, agar  dapat menjangkau lebih luas dan memberikan seniman platform untuk memamerkan dan menjual karya mereka kepada audiens yang lebih beragam 🖼️, serta mengubah cara kita melihat dan menghargai seni dalam konteks digital 👨🏻‍🎨`
 
@@ -391,3 +391,514 @@ Penerapan Clean Architecture membantu dalam pengembangan aplikasi Flutter yang l
 <br>
 
 ### 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial)
+
+Pertama tama untuk merapikan code dart yang tersedia, developer membuat 2 folder yang memisahkan setiap fungsi dari code, pertama berisi `screens`, kedua berisi `widgets`.
+
+- [x] Membuat minimal satu halaman baru pada aplikasi, yaitu halaman formulir tambah item baru dengan ketentuan sebagai berikut:
+
+    Untuk membuat halaman yang berisikan formulir untuk menambahkan item baru, saya membuat dile dart baru bernama  `shoplist_form` pada folder `screens`. 
+
+    Kemudian Memakai minimal tiga elemen input, yaitu name, amount, description. Tambahkan elemen input sesuai dengan model pada aplikasi tugas Django yang telah kamu buat. Kode sebagai berikut:
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:shopping_art/widgets/left_drawer.dart';
+    import 'package:shopping_art/models/product.dart';
+
+    class ShopFormPage extends StatefulWidget {
+    const ShopFormPage({super.key});
+
+    @override
+    State<ShopFormPage> createState() => _ShopFormPageState();
+    }
+
+    List<Product> productList = [];
+
+    class _ShopFormPageState extends State<ShopFormPage> {
+    final _formKey = GlobalKey<FormState>();
+    String _name = "";
+    int _price = 0;
+    String _description = "";
+
+    // Global list to store products
+    void _saveProduct() {
+        if (_formKey.currentState!.validate()) {
+        // Add product to the global list
+        productList.add(Product(
+            name: _name,
+            price: _price,
+            description: _description,
+        ));
+
+        showDialog(
+            context: context,
+            builder: (context) {
+            return AlertDialog(
+                title: const Text('Produk berhasil tersimpan'),
+                content: SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                    Text('Nama: $_name'),
+                    Text('Harga: $_price'),
+                    Text('Deskripsi: $_description'),
+                    ],
+                ),
+                ),
+                actions: [
+                TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                    Navigator.pop(context);
+                    },
+                ),
+                ],
+            );
+            },
+        );
+
+        _formKey.currentState!.reset();
+        }
+    }
+    ...
+    
+    ```
+
+    Setelah itu saya membuat tempat untuk memasukan isi form dengan code sebagai berikut 
+    ```
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+        appBar: AppBar(
+            title: const Center(
+            child: Text(
+                'Form Tambah Produk',
+            ),
+            ),
+            backgroundColor: Colors.indigo,
+            foregroundColor: Colors.white,
+        ),
+        body: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                    hintText: "Nama Produk",
+                    labelText: "Nama Produk",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    ),
+                    onChanged: (String? value) {
+                    setState(() {
+                        _name = value!;
+                    });
+                    },
+                    validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                        return "Nama tidak boleh kosong!";
+                    }
+                    return null;
+                    },
+                ),
+                ),
+                Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                    hintText: "Harga",
+                    labelText: "Harga",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    ),
+                    onChanged: (String? value) {
+                    setState(() {
+                        _price = int.parse(value!);
+                    });
+                    },
+                    validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                        return "Harga tidak boleh kosong!";
+                    }
+                    if (int.tryParse(value) == null) {
+                        return "Harga harus berupa angka!";
+                    }
+                    return null;
+                    },
+                ),
+                ),
+                Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                    hintText: "Deskripsi",
+                    labelText: "Deskripsi",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    ),
+                    onChanged: (String? value) {
+                    setState(() {
+                        // TODO: Tambahkan variabel yang sesuai
+                        _description = value!;
+                    });
+                    },
+                    validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                        return "Deskripsi tidak boleh kosong!";
+                    }
+                    return null;
+                    },
+                ),
+                ),
+                Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.indigo),
+                    ),
+                    onPressed: _saveProduct,
+                    child: const Text(
+                        "Save",
+                        style: TextStyle(color: Colors.white),
+                    ),
+                    ),
+                ),
+                ),
+            ]),
+            ),
+        ),
+        );
+    }
+    }
+    ```
+
+    Untuk mensave product dapat dibuat dengan `onPressed: _saveProduct` yang terdapat pada potongan kode diatas
+
+    Untuk memvalidasi setiap form pada nama, harga dan deskripsi dapat dibuat dengan if else, berikut potongan kodenya
+
+    ```
+    validator: (String? value) {
+        if (value == null || value.isEmpty) {
+        return "Deskripsi tidak boleh kosong!";
+        }
+        return null;
+    },
+    ```
+    Dan ini berlaku untuk ketiga form field
+
+- [x]  Mengarahkan pengguna ke halaman form tambah item baru ketika menekan tombol Tambah Item pada halaman utama.
+
+    Pertama tama pisahkan menu dengan membaut baru `widget` bernama `shop_card.dart`. Copy kode dari menu agar shop_card.dart menjadi seperti berikut ini:
+
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:shopping_art/screens/lihat_product.dart';
+    import 'package:shopping_art/screens/shoplist_form.dart';
+    import 'package:shopping_art/screens/lihat_product.dart';
+
+
+    class ShopItem {
+    final String name;
+    final IconData icon;
+
+    ShopItem(this.name, this.icon);
+    }
+
+    class ShopCard extends StatelessWidget {
+    final ShopItem item;
+
+    const ShopCard(this.item, {super.key}); // Constructor
+
+    Color getButtonColor(ShopItem item) {
+        // Fungsi ini akan mengembalikan warna latar belakang sesuai dengan nama tombol
+        switch (item.name) {
+        case "Lihat Produk":
+            return Colors.indigo;
+        case "Tambah Produk":
+            return Colors.cyan;
+        case "Logout":
+            return Colors.pink;
+        default:
+            return Colors.indigo; 
+        }
+    }
+
+    @override
+    Widget build(BuildContext context) {
+        return Material(
+        color: getButtonColor(item), // Menggunakan fungsi getButtonColor
+        child: InkWell(
+            // Area responsive terhadap sentuhan
+            onTap: () {
+            // Memunculkan SnackBar ketika diklik
+            ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                    content: Text("Kamu telah menekan tombol ${item.name}!")));
+            // Navigate ke route yang sesuai (tergantung jenis tombol)
+            if (item.name == "Tambah Produk") {
+                // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute yang mencakup ShopFormPage.
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShopFormPage()),
+                );
+            }
+
+            if (item.name == "Lihat Produk") {
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProductListPage(products: productList)),
+                );
+            }
+            },
+            child: Container(
+            // Container untuk menyimpan Icon dan Text
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8), // Set the border radius here
+                color: getButtonColor(item),
+            ),
+            padding: const EdgeInsets.all(8),
+            child: Center(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                    Icon(
+                    item.icon,
+                    color: Colors.white,
+                    size: 30.0,
+                    ),
+                    const Padding(padding: EdgeInsets.all(3)),
+                    Text(
+                    item.name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white),
+                    ),
+                ],
+                ),
+            ),
+            ),
+        ),
+        );
+    }
+    }
+    
+    ```
+
+    Untuk mengarahkan pengguna ke halaman form tambah item baru, dapat dipush melalui `shop_card.dart` dengan pertama tama mengimport page dart dari `shopplist_form`.
+    ```
+    import 'package:shopping_art/screens/shoplist_form.dart';
+    ```
+
+    Selanjutnya buat state agar saat button buat product di tekan dia akan push ke page shopplist_form. Kode sebagai berikut:
+
+    ```
+    // Navigate ke route yang sesuai (tergantung jenis tombol)
+    if (item.name == "Tambah Produk") {
+    // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute yang mencakup ShopFormPage.
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ShopFormPage()),
+    );
+    }
+    
+    ```
+
+    Selanutnya panggil `shop_card.dart` pada  `menu.dart`
+    ```
+    children: items.map((ShopItem item) {
+        // Iterasi untuk setiap item
+        return ShopCard(item);
+    }).toList(),
+    ```
+
+- [x] Memunculkan data sesuai isi dari formulir yang diisi dalam sebuah pop-up setelah menekan tombol Save pada halaman formulir tambah item baru.
+
+    Untuk memunculkan data sesuai dari isi formulir yang diisi, saya menggunakan gungsi save product, dengan show dialog. Kode pada show dialog adalah sebagai berikut:
+
+    ```
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Produk berhasil tersimpan'),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Nama: $_name'),
+                  Text('Harga: $_price'),
+                  Text('Deskripsi: $_description'),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    ```
+
+- [x]  Membuat sebuah drawer pada aplikasi dengan ketentuan sebagai berikut:
+
+    Untuk membuat sebuah drawer, kita pertama tama harus membuat file `left_drawer.dart` pada folder `widgets`. Code dari left_drawer adalah sebagai berikut :
+
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:shopping_art/screens/menu.dart';
+    import 'package:shopping_art/screens/shoplist_form.dart';
+    import 'package:shopping_art/screens/lihat_product.dart';
+
+    class LeftDrawer extends StatelessWidget {
+    const LeftDrawer({super.key});
+
+    @override
+    Widget build(BuildContext context) {
+        return Drawer(
+        child: ListView(
+            children: [
+            const DrawerHeader(
+                decoration: BoxDecoration(
+                color: Colors.indigo,
+                ),
+                child: Column(
+                children: [
+                    Text(
+                    'Shopping List',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                    ),
+                    ),
+                    Padding(padding: EdgeInsets.all(10)),
+                    Text("Catat seluruh keperluan belanjamu di sini!",
+                        // TODO: Tambahkan gaya teks dengan center alignment, font ukuran 15, warna putih, dan weight biasa
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                        )),
+                ],
+                ),
+            ),
+            // TODO: Bagian routing
+            ListTile(
+                leading: const Icon(Icons.home_outlined),
+                title: const Text('Halaman Utama'),
+                // Bagian redirection ke MyHomePage
+                onTap: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyHomePage(),
+                    ));
+                },
+            ),
+            ListTile(
+                leading: const Icon(Icons.add_shopping_cart),
+                title: const Text('Tambah Produk'),
+                // Bagian redirection ke ShopFormPage
+                onTap: () {
+                /*
+                TODO: Buatlah routing ke ShopFormPage di sini,
+                setelah halaman ShopFormPage sudah dibuat.
+                */
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ShopFormPage(),
+                    ));
+                },
+            ),
+            ListTile(
+                leading: const Icon(Icons.movie),
+                title: const Text('Lihat Produk'),
+                onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ProductListPage(products: productList)),
+                );
+                },
+            ),
+            ],
+        ),
+        );
+    }
+    }
+    
+    ```
+
+- [x] Mengerjakan Bonus showitem
+
+    Pertama tama buat folder `models` yang didalamnya berisi file `product.dart` dengan kode sebagai berikut
+    ```
+    class Product {
+    final String name;
+    final int price;
+    final String description;
+
+    Product({required this.name, required this.price, required this.description});
+    }
+    ```
+
+    Selanjutnya buat screen `lihat_product.dart` di dalam folder `screens` dengan kode sebagai berikut
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:shopping_art/models/product.dart';
+
+    class ProductListPage extends StatelessWidget {
+    final List<Product> products;
+
+    ProductListPage({Key? key, required this.products}) : super(key: key);
+
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+        appBar: AppBar(
+            title: Text('Daftar Produk'),
+        ),
+        body: ListView.builder(
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+            return Card(
+                child: ListTile(
+                title: Text(products[index].name),
+                subtitle: Text('Harga: ${products[index].price}\nDeskripsi: ${products[index].description}'),
+                ),
+            );
+            },
+        ),
+        );
+    }
+    }
+    ```
+
+    Untuk mengakses tersebut, link dengan `shop_card.dart` dengan menggunakan push, dengan kode sebagai berikut
+
+    ```
+    if (item.name == "Lihat Produk") {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProductListPage(products: productList)),
+        );
+    }
+    ```
