@@ -902,3 +902,94 @@ Pertama tama untuk merapikan code dart yang tersedia, developer membuat 2 folder
         );
     }
     ```
+
+# Tugas 9
+
+###  Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+
+Ya, kita bisa melakukan pengambilan data JSON tanpa membuat model terlebih dahulu. Dalam Flutter, data JSON dapat diambil dan dikelola langsung sebagai `Map<String, dynamic>` atau `List<Map<String, dynamic>> `tergantung struktur JSON yang diterima. Namun, pendekatan ini kurang ideal dibandingkan dengan menggunakan model karena beberapa alasan:
+
+- `Ketidakefisienan`: Mengelola data langsung dari JSON membutuhkan penanganan secara manual untuk setiap field data, yang bisa menjadi rumit dan rawan error.
+- `Ketidakrapihan Kod`e: Code menjadi kurang rapi dan susah dibaca karena harus melakukan banyak mapping manual.
+- `Ketidakamanan Tipe Data:` Tanpa model, tidak ada keamanan tipe data yang terjamin. Kesalahan tipe data bisa terjadi, mengingat data JSON hanya diketahui strukturnya pada saat runtime.
+- `Skalabilitas dan Pemeliharaan: `Dengan model, memperbarui atau mengubah struktur data menjadi lebih mudah dan terpusat.
+
+
+Berikut adalah perbandingan antara melakukan pengambilan data JSON tanpa dan dengan membuat model terlebih dahulu:
+
+| Aspek              | Tanpa Model                   | Dengan Model                   |
+|--------------------|-------------------------------|--------------------------------|
+| Ketidakefisienan   | Tinggi, memerlukan penanganan manual untuk setiap field | Rendah, model mengelola struktur data |
+| Ketidakrapihan Kode| Kode kurang rapi dan susah dibaca karena banyak mapping manual | Kode lebih rapi dan mudah dibaca |
+| Ketidakamanan Tipe Data | Tinggi, karena tidak ada keamanan tipe data terjamin | Rendah, model menyediakan keamanan tipe data |
+| Skalabilitas dan Pemeliharaan | Rendah, sulit memperbarui atau mengubah struktur data | Tinggi, mudah memperbarui atau mengubah struktur data |
+
+
+###  Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+`CookieRequest` adalah kelas yang memanage HTTP requests sambil mempertahankan cookies, yang sangat penting untuk autentikasi dan sesi yang persisten dalam aplikasi. Fungsinya meliputi:
+
+Fungsi dan kebutuhan instance `CookieRequest` dalam aplikasi Flutter:
+
+| Aspek           | Keterangan |
+|-----------------|------------|
+| Mengelola Cookies | Mengelola cookies untuk setiap HTTP request dan response |
+| Persistensi Sesi | Memungkinkan sesi pengguna tetap aktif selama aplikasi terbuka |
+| Konsistensi Sesi | Memastikan semua request mempertahankan sesi yang sama |
+| Efisiensi | Menghindari pembuatan instance `CookieRequest` yang berlebihan |
+
+
+###  Jelaskan mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter.
+Proses pengambilan data dari JSON dan menampilkannya pada aplikasi Flutter melibatkan beberapa langkah kunci:
+
+1. **Fetch Data**:
+   - Menggunakan HTTP request (biasanya `GET`) untuk mengambil data JSON dari web service.
+
+2. **Deserialisasi JSON**:
+   - Mengubah data JSON yang diterima menjadi objek Dart. Ini bisa dilakukan dengan menggunakan model yang sudah dibuat atau secara langsung menjadi `Map` atau `List`, tergantung pada struktur JSON.
+
+3. **Penggunaan Data**:
+   - Menggunakan data yang telah dikonversi untuk mengisi state atau variabel di dalam aplikasi Flutter. Ini bisa berupa data yang ditampilkan langsung atau yang digunakan untuk logika lebih lanjut dalam aplikasi.
+
+4. **Menampilkan Data**:
+   - Menampilkan data yang telah dikonversi ke dalam aplikasi dengan menggunakan berbagai widget Flutter. Sebagai contoh, `ListView.builder` dapat digunakan untuk menampilkan daftar data, sementara `Text` atau `Card` widget dapat digunakan untuk menampilkan detail data.
+
+`Catatan Penting`
+
+- Penting untuk melakukan penanganan error selama proses fetch data untuk menangani kasus seperti koneksi jaringan yang buruk atau data yang tidak valid.
+- Gunakan `FutureBuilder` atau `StreamBuilder` untuk membangun widget yang bergantung pada data asynchronous, seperti data yang di-fetch dari web service.
+
+###  Jelaskan mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+Proses autentikasi antara aplikasi Flutter dan backend Django melibatkan beberapa langkah kunci untuk memastikan keamanan dan kesinambungan data.
+
+
+1. **Input Data**:
+   - Pengguna memasukkan data akun (seperti username dan password) di aplikasi Flutter.
+
+2. **Kirim ke Django**:
+   - Flutter mengirimkan data akun tersebut ke backend Django menggunakan HTTP request (biasanya `POST`).
+
+3. **Proses di Django**:
+   - Backend Django menerima data tersebut dan melakukan proses autentikasi. Ini melibatkan pengecekan ke database untuk mencocokkan data pengguna.
+
+4. **Respons ke Flutter**:
+   - Setelah memproses data, Django mengirimkan respons ke aplikasi Flutter. Respons ini bisa berupa konfirmasi keberhasilan atau gagalnya proses autentikasi.
+
+5. **Tampilan di Flutter**:
+   - Berdasarkan respons dari Django, Flutter kemudian menampilkan hasil autentikasi. Jika berhasil, aplikasi mungkin akan membuka halaman menu utama atau dashboard. Jika gagal, aplikasi mungkin akan menampilkan pesan error atau meminta pengguna untuk mencoba lagi.
+
+###  Sebutkan seluruh widget yang kamu pakai pada tugas ini dan jelaskan fungsinya masing-masing.
+Widget yang digunakan pada tugas ini dan fungsinya:
+| Widget            | Fungsi |
+|-------------------|--------|
+| `Scaffold`        | Membuat struktur dasar tampilan aplikasi |
+| `ListView.builder`| Membuat daftar dinamis berdasarkan data |
+| `TextFormField`   | Mengumpulkan input teks dari pengguna |
+| `ElevatedButton`  | Tombol untuk melakukan aksi, seperti submit form |
+| `FutureBuilder`   | Membangun UI berdasarkan hasil interaksi dengan `Future` |
+
+###  Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+
+#### Implementasi Pada Project Django
+
+
+#### Implementasi Pada Project Flutter

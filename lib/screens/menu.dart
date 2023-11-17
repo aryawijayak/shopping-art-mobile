@@ -1,15 +1,14 @@
 import 'package:shopping_art/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping_art/screens/shoplist_form.dart';
 import 'package:shopping_art/widgets/shop_card.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key}) : super(key: key);
 
   final List<ShopItem> items = [
-    ShopItem("Lihat Produk", Icons.checklist),
-    ShopItem("Tambah Produk", Icons.add_shopping_cart),
-    ShopItem("Logout", Icons.logout),
+    ShopItem("Lihat Produk", Icons.checklist, Colors.indigo),
+    ShopItem("Tambah Produk", Icons.add_shopping_cart, Colors.cyan),
+    ShopItem("Logout", Icons.logout, Colors.pink),
   ];
 
   @override
