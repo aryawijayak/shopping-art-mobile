@@ -989,7 +989,812 @@ Widget yang digunakan pada tugas ini dan fungsinya:
 
 ###  Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
 
-#### Implementasi Pada Project Django
+- [x] Memastikan deployment proyek tugas Django kamu telah berjalan dengan baik.
+
+    Pastikan Secret and Variables pada Repository GitHub sudah benar dan tepat lalu pastikan file-file yang dibutuhkan untuk keperluan deployment sudah ada pada file proyek Django.
+
+- [x] Membuat halaman login pada proyek tugas Flutter. 
+
+    ```
+    
+    import 'package:shopping_art/screens/menu.dart';
+import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_art/screens/register.dart';
+
+void main() {
+    runApp(const LoginApp());
+}
+
+class LoginApp extends StatelessWidget {
+const LoginApp({super.key});
+
+@override
+Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Login',
+        theme: ThemeData(
+            primarySwatch: Colors.blue,
+    ),
+    home: const LoginPage(),
+    );
+    }
+}
+
+class LoginPage extends StatefulWidget {
+    const LoginPage({super.key});
+
+    @override
+    _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+     bool _passwordVisible = false;
+
+    @override
+    Widget build(BuildContext context) {
+        final request = context.watch<CookieRequest>();
+        return Scaffold(
+            appBar: AppBar(
+                title: const Text('Login'),
+            ),
+            body: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                        TextField(
+                            controller: _usernameController,
+                            decoration: const InputDecoration(
+                                labelText: 'Username',
+                                prefixIcon: Icon(Icons.person),
+                            ),
+                            
+                        ),
+                        const SizedBox(height: 12.0),
+                        TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    // change the icon based on the password visibility
+                    _passwordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    // password visibility state
+                    setState(() {
+                      _passwordVisible = !_passwordVisible;
+                    });
+                  },
+                ),
+              ),
+              obscureText: !_passwordVisible,
+            ),
+                        const SizedBox(height: 24.0),
+                        ElevatedButton(
+                            onPressed: () async {
+                                String username = _usernameController.text;
+                                String password = _passwordController.text;
+
+                                // Cek kredensial
+                                // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+                                // Untuk menyambungkan Android emulator dengan Django pada localhost,
+                                // gunakan URL http://10.0.2.2/
+                                final response = await request.login("http://127.0.0.1:8000/auth/login/", {
+                                'username': username,
+                                'password': password,
+                                });
+                    
+                                if (request.loggedIn) {
+                                    String message = response['message'];
+                                    String uname = response['username'];
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => MyHomePage()),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                            SnackBar(content: Text("$message Selamat datang, $uname.")));
+                                    } else {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                            title: const Text('Login Gagal'),
+                                            content:
+                                                Text(response['message']),
+                                            actions: [
+                                                TextButton(
+                                                    child: const Text('OK'),
+                                                    onPressed: () {
+                                                        Navigator.pop(context);
+                                                    },
+                                                ),
+                                            ],
+                                        ),
+                                    );
+                                }
+                            },
+                            child: const Text('Login'),
+                        ),
+                        const SizedBox(height: 20.0),
+                        Text(
+                        "Belum Punya Akun?",
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    RegisterPage()), // Navigate to login page
+                          );
+                        },
+                        child: Text(
+                          'Register',
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        );
+    }
+}
+    
+    ```
+
+- [x] Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
+    Pada projek Django buat app baru bernama `authentication` lalu install library 'django-cors-headers'. Tambahkan `authentication dan `corsheaders` kedalam `INSTALLED_APPS` di `settings.py`. Tambahkan juga `corsheaders.middleware.CorsMiddleware` pada `settings.py` dan tambahkan beberapa variabel berikut ini:
+    ```
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_CREDENTIALS = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SAMESITE = 'None'
+    ```
+    Buat fungsi `login`, `logout` pada `authentication/views.py` dan lakukan routingnya pada `urls.py`
+
+    Install package berikut ini pada projek Flutter:
+    ```
+    flutter pub add provider
+    flutter pub add pbp_django_auth
+    ```
+    Lalu ubah class `MyApp` pada `main.dart` menjadi:
+    ```
+        class MyApp extends StatelessWidget {
+        const MyApp({Key? key}) : super(key: key);
+        
+        @override
+        Widget build(BuildContext context) {
+            return Provider(
+            create: (_) {
+                CookieRequest request = CookieRequest();
+                return request;
+            },
+            child: MaterialApp(
+                title: 'Flutter App',
+                theme: ThemeData(
+                    colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+                    useMaterial3: true,
+                ),
+                home: LoginPage()),
+            );
+        }
+    }
+    ```
+
+- [x] Membuat model kustom sesuai dengan proyek aplikasi Django. 
+
+    Buka endpoint `JSON` pada website Django lalu copy semua data yang ada di endpoint `JSON`. Buka situs web Quicktype dan tempel data `JSON` tadi lalu ubah language menjadi `DART`. Lalu tekan tombol `Copy Code` pada Quicktype.
+    
+    Pada projek Flutter buat folder baru `lib/models` lalu buat file baru `product.dart` dan tempel kode yang sudah disalin dari Quicktype sehingga menjadi seperti ini:
+    ```
+    // To parse this JSON data, do
+    //
+    //     final product = productFromJson(jsonString);
+    
+    import 'dart:convert';
+    
+    List<Product> productFromJson(String str) => List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
+    
+    String productToJson(List<Product> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+    
+    class Product {
+      String model;
+      int pk;
+      Fields fields;
+    
+      Product({
+        required this.model,
+        required this.pk,
+        required this.fields,
+      });
+    
+      factory Product.fromJson(Map<String, dynamic> json) => Product(
+        model: json["model"],
+        pk: json["pk"],
+        fields: Fields.fromJson(json["fields"]),
+      );
+    
+      Map<String, dynamic> toJson() => {
+        "model": model,
+        "pk": pk,
+        "fields": fields.toJson(),
+      };
+    }
+    
+    class Fields {
+      int user;
+      String name;
+      int amount;
+      int price;
+      String description;
+    
+      Fields({
+        required this.user,
+        required this.name,
+        required this.amount,
+        required this.price,
+        required this.description,
+      });
+    
+      factory Fields.fromJson(Map<String, dynamic> json) => Fields(
+        user: json["user"],
+        name: json["name"],
+        amount: json["amount"],
+        price: json["price"],
+        description: json["description"],
+      );
+    
+      Map<String, dynamic> toJson() => {
+        "user": user,
+        "name": name,
+        "amount": amount,
+        "price": price,
+        "description": description,
+      };
+    }
+    ```
+- [x] Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu   deploy. 
+        
+    Pada projek Flutter buat file `list_product.dart` lalu isi dengan kode:
+
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:http/http.dart' as http;
+    import 'dart:convert';
+    import 'package:shopping_art/models/product.dart';
+    import 'package:shopping_art/widgets/left_drawer.dart';
+    import 'package:shopping_art/screens/item_detail.dart';
+
+    class ProductPage extends StatefulWidget {
+    const ProductPage({Key? key}) : super(key: key);
+
+    @override
+    _ProductPageState createState() => _ProductPageState();
+    }
+
+    class _ProductPageState extends State<ProductPage> {
+    TextEditingController _searchController = TextEditingController();
+    List<Product> _allProducts = [];
+    List<Product> _filteredProducts = [];
+
+    Future<List<Product>> fetchProduct() async {
+        var url = Uri.parse('http://127.0.0.1:8000/json/');
+        var response = await http.get(
+        url,
+        headers: {"Content-Type": "application/json"},
+        );
+
+        var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        List<Product> listProduct = [];
+        for (var d in data) {
+        if (d != null) {
+            listProduct.add(Product.fromJson(d));
+        }
+        }
+        return listProduct;
+    }
+
+    @override
+    void initState() {
+        super.initState();
+        _searchController.addListener(_filterProducts);
+    }
+
+    void _filterProducts() {
+        String searchTerm = _searchController.text.toLowerCase();
+        setState(() {
+        _filteredProducts = _allProducts
+            .where((product) =>
+                product.fields.name.toLowerCase().contains(searchTerm) ||
+                product.fields.description.toLowerCase().contains(searchTerm))
+            .toList();
+        });
+    }
+
+    @override
+    void dispose() {
+        _searchController.dispose();
+        super.dispose();
+    }
+
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+        appBar: AppBar(
+            title: const Text('Product'),
+        ),
+        drawer: const LeftDrawer(),
+        body: Column(
+            children: [
+            Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                ),
+                child: TextField(
+                    controller: _searchController,
+                    onChanged: (value) {
+                    _filterProducts();
+                    },
+                    decoration: InputDecoration(
+                    hintText: "Search",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                    ),
+                    ),
+                ),
+                ),
+            ),
+            Expanded(
+                child: FutureBuilder(
+                future: fetchProduct(),
+                builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                    } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+                    return Center(
+                        child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                            Text(
+                            "Data doesn't exist.",
+                            style: TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(height: 8),
+                        ],
+                        ),
+                    );
+                    } else {
+                    return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (_, index) => InkWell(
+                        onTap: () {
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailItem(
+                                item: snapshot.data![index],
+                                )
+                            )
+                            );
+                        },
+                            child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Text(
+                                    "${snapshot.data![index].fields.name}",
+                                    style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    ),
+                                ),
+                                Text(
+                                    "Price: \$${snapshot.data![index].fields.price.toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold,
+                                    ),
+                                ),
+                                ],
+                            ),
+                            ),
+                        )
+                        );
+                    }
+                },
+                ),
+            ),
+            ],
+        ),
+        );
+    }
+    }
+    ```
+
+- [x] Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item. 
+
+    Pada projek Flutter buat file baru `item_detail.dart` lalu isi dengan kode:
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:shopping_art/models/product.dart';
+    import 'package:shopping_art/models/product.dart';
 
 
-#### Implementasi Pada Project Flutter
+
+    class DetailItem extends StatelessWidget {
+    final Product item;
+
+    const DetailItem({Key? key, required this.item}) : super(key: key);
+
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+        appBar: AppBar(
+            title: Text(item.fields.name),
+            leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+                Navigator.pop(context); // Navigate back to the previous page
+            },
+            ),
+        ),
+        body: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                Text(
+                item.fields.name,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                Text("Price: ${item.fields.price}"),
+                SizedBox(height: 10),
+                Text("Description: ${item.fields.description}"),
+            ],
+            ),
+        ),
+        );
+    }
+    }
+    
+    ```
+
+- [x] Halaman ini dapat diakses dengan menekan salah satu item pada halaman daftar Item.
+
+    ```
+    
+    return ListView.builder(
+        itemCount: snapshot.data!.length,
+        itemBuilder: (_, index) => InkWell(
+            onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                builder: (context) => DetailItem(
+                    item: snapshot.data![index],
+                )
+                )
+            );
+            },
+        ...
+    ```
+
+ - [x] Tambahkan tombol untuk kembali ke halaman daftar item. 
+    ```
+    leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous page
+          },
+        ),
+    ```
+
+- [x] Bonus Register
+    Untuk register dapat membuat file `register.dart` dengan kode sebagai berikut:
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:http/http.dart' as http;
+    import 'package:provider/provider.dart';
+    import 'package:shopping_art/screens/login.dart';
+    import 'package:pbp_django_auth/pbp_django_auth.dart';
+
+    void main() {
+    runApp(const RegisterApp());
+    }
+
+    class RegisterApp extends StatelessWidget {
+    const RegisterApp({Key? key});
+
+    @override
+    Widget build(BuildContext context) {
+        return MaterialApp(
+        title: 'Sign Up',
+        theme: ThemeData(
+            primarySwatch: Colors.blue,
+        ),
+        home: const RegisterPage(),
+        );
+    }
+    }
+
+    class RegisterPage extends StatefulWidget {
+    const RegisterPage({Key? key});
+
+    @override
+    _RegisterPageState createState() => _RegisterPageState();
+    }
+
+    class _RegisterPageState extends State<RegisterPage> {
+    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController _passwordConfirmationController =
+        TextEditingController();
+    bool _passwordVisible = false;
+
+    @override
+    Widget build(BuildContext context) {
+        final request = context.watch<CookieRequest>();
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        return Scaffold(
+        appBar: AppBar(
+            title: const Text(
+            'Register',
+            style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+        ),
+        body: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                TextField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                    labelText: 'Username',
+                    prefixIcon: Icon(Icons.person),
+                ),
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                    icon: Icon(
+                        // change the icon based on the password visibility
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                        // password visibility state
+                        setState(() {
+                        _passwordVisible = !_passwordVisible;
+                        });
+                    },
+                    ),
+                ),
+                obscureText: !_passwordVisible,
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                controller: _passwordConfirmationController,
+                decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    prefixIcon: Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                    icon: Icon(
+                        // change the icon based on the password visibility
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                        // password visibility state
+                        setState(() {
+                        _passwordVisible = !_passwordVisible;
+                        });
+                    },
+                    ),
+                ),
+                obscureText: !_passwordVisible,
+                ),
+                const SizedBox(height: 18.0),
+                ElevatedButton(
+                onPressed: () async {
+                    String username = _usernameController.text;
+                    String password = _passwordController.text;
+                    String passwordConfirmation =
+                        _passwordConfirmationController.text;
+
+                    // Perform input validation
+                    if (username.isEmpty ||
+                        password.isEmpty ||
+                        passwordConfirmation.isEmpty) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                        title: const Text('Registration Failed'),
+                        content: const Text('Please fill in all fields.'),
+                        actions: [
+                            TextButton(
+                            child: const Text('OK'),
+                            onPressed: () {
+                                Navigator.pop(context);
+                            },
+                            ),
+                        ],
+                        ),
+                    );
+                    return;
+                    }
+
+                    if (password != passwordConfirmation) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                        title: const Text('Registration Failed'),
+                        content: const Text('Passwords do not match.'),
+                        actions: [
+                            TextButton(
+                            child: const Text('OK'),
+                            onPressed: () {
+                                Navigator.pop(context);
+                            },
+                            ),
+                        ],
+                        ),
+                    );
+                    return;
+                    }
+                    // Registration logic, send registration request to your server API
+                    final response = await http.post(
+                    Uri.parse('http://127.0.0.1:8000/auth/register/'),
+                    body: {
+                        'username': username,
+                        'password1': password,
+                        'password2': passwordConfirmation,
+                    },
+                    );
+
+                    if (response.statusCode == 201) {
+                    // Registration successful
+                    String message =
+                        'Registration successful. Please Log in';
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                    ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(SnackBar(
+                        content: Text(message),
+                        ));
+                    } else {
+                    // Registration failed
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                        title: const Text('Registration Failed'),
+                        content: const Text(
+                            'Registration failed. Please try again later.'),
+                        actions: [
+                            TextButton(
+                            child: const Text('OK'),
+                            onPressed: () {
+                                Navigator.pop(context);
+                            },
+                            ),
+                        ],
+                        ),
+                    );
+                    }
+                },
+                child: const Text('Sign Up'),
+                ),
+                const SizedBox(height: 20.0),
+                Text(
+                "Sudah Punya Akun?",
+                ),
+                InkWell(
+                onTap: () {
+                    Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            LoginPage()), // Navigate to login page
+                    );
+                },
+                child: Text(
+                    'Login',
+                    style: TextStyle(
+                    fontSize: 14.0,
+                    decoration: TextDecoration.underline,
+                    ),
+                ),
+                ),
+            ],
+            ),
+        ),
+        );
+    }
+    }
+
+    ```
+
+- [x] Bonus Filter
+    Untuk filter search di list product pertama tama dibuat dengan membuat function filter product
+    ```
+      @override
+        void initState() {
+            super.initState();
+            _searchController.addListener(_filterProducts);
+        }
+
+        void _filterProducts() {
+            String searchTerm = _searchController.text.toLowerCase();
+            setState(() {
+            _filteredProducts = _allProducts
+                .where((product) =>
+                    product.fields.name.toLowerCase().contains(searchTerm) ||
+                    product.fields.description.toLowerCase().contains(searchTerm))
+                .toList();
+            });
+        }
+    ```
+
+    dan masukan pada tampilan seperti kode berikut ini:
+
+    ```
+    Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  _filterProducts();
+                },
+                decoration: InputDecoration(
+                  hintText: "Search",
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+            ),
+          ),
+    
+    ```
