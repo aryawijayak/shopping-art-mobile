@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shopping_art/models/product.dart';
 import 'package:shopping_art/widgets/left_drawer.dart';
+import 'package:shopping_art/screens/item_detail.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
@@ -108,33 +109,48 @@ class _ProductPageState extends State<ProductPage> {
                     ),
                   );
                 } else {
-                  _allProducts = snapshot.data;
-                  _filteredProducts = _allProducts;
                   return ListView.builder(
-                    itemCount: _filteredProducts.length,
-                    itemBuilder: (_, index) => Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${_filteredProducts[index].fields.name}",
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (_, index) => InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailItem(
+                              item: snapshot.data![index],
+                            )
+                          )
+                        );
+                      },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${snapshot.data![index].fields.name}",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                 "Price: \$${snapshot.data![index].fields.price.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 10),
-                          Text("${_filteredProducts[index].fields.price}"),
-                          const SizedBox(height: 10),
-                          Text("${_filteredProducts[index].fields.description}")
-                        ],
-                      ),
-                    ),
-                  );
+                        ),
+                      )
+                    );
                 }
               },
             ),
