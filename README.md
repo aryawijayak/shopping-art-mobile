@@ -2,6 +2,9 @@
 
 `Dalam era digital ini 🏙️, seni sering diabaikan dan kurang dihargai 😢. shopping art sekarang sudah hadir dalam versi mobile 📱, agar  dapat menjangkau lebih luas dan memberikan seniman platform untuk memamerkan dan menjual karya mereka kepada audiens yang lebih beragam 🖼️, serta mengubah cara kita melihat dan menghargai seni dalam konteks digital 👨🏻‍🎨`
 
+[![Build status](https://build.appcenter.ms/v0.1/apps/0a7ad71b-39b8-4466-8fe7-815698057db7/branches/main/badge)](https://appcenter.ms) 
+
+
 # Tugas 7
 
 ### 1.Apa perbedaan utama antara stateless dan stateful widget dalam konteks pengembangan aplikasi Flutter?
